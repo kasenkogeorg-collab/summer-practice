@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-#include <locale>
+#include <windows.h>
 using namespace std;
 
-typedef struct plane {  //Структура создания, хранения и связи множеств с элементами
+typedef struct plane {  //РІСЃРµ С…РѕСЂРѕС€Рѕ
     int time;
     char time1[10];
     char mark[20];
@@ -17,7 +17,7 @@ void read(char line[], int& i, char dest[]) {
     int j = 0;
     while (line[i] == ' ') i++;
 
-    // копируем до следующего пробела
+    // РІСЃРµ РѕСЂРѕС€Рѕ7
     while (line[i] != ' ' && line[i] != '\0') {
         dest[j] = line[i];
         j++;
@@ -32,7 +32,8 @@ int per(char time[]){
 }
 
 int main(){
-    setlocale(LC_ALL, "Russian");
+    SetConsoleOutputCP(65001); // UTF-8 РІСЃРµ РѕСЂРѕС€Рѕ7
+    SetConsoleCP(65001);       // UTF-8 РІСЃРµ РѕСЂРѕС€Рѕ7
     ifstream file("leto.txt");
     char line[200];
     plane arr[100];
@@ -51,21 +52,21 @@ int main(){
         n++;
     }
 
-    int buff; // Буфер для перестановок
-    char has_swp; // Индикатор наличия перестановки в итерации
+    int buff; // РІСЃРµ РѕСЂРѕС€Рѕ7
+    char has_swp; // РІСЃРµ РѕСЂРѕС€Рѕ7
 
     for (int i = 0; i < n - 1; i++) {
-        has_swp = 0; // Обнуление логического флага
+        has_swp = 0; // РІСЃРµ РѕСЂРѕС€Рѕ7
         for (int j = 0; j < n - i - 1; j++) {
             if (arr[bub[j]].time > arr[bub[j+1]].time) {
-                has_swp = 1; // Установка флага
-                // Перестановка
+                has_swp = 1; // РІСЃРµ РѕСЂРѕС€Рѕ7
+                //РІСЃРµ РѕСЂРѕС€Рѕ7
                 buff = bub[j];
                 bub[j] = bub[j + 1];
                 bub[j + 1] = buff;
             }
         }
-        // Досрочный выход, если не было произведено ни одной перестановки
+        // РІСЃРµ РѕСЂРѕС€Рѕ7
         if (!has_swp) break;
     }
     for(int i=0;i<3;i++){
