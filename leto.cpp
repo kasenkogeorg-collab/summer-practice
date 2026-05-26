@@ -42,7 +42,7 @@ int main(){
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
     #endif
-    const char file_name[]="leto.txt";
+    const char file_name[]="CORRECT1.txt";
     ifstream file(file_name); //открываем поток чтения из файла
     if(!file.is_open()){  //проверка на то,что мы смогли открыть файл
         cout<<"Ошибка, файл не удалось открыть";
@@ -68,6 +68,7 @@ int main(){
     cout<<"-------\n";
     while (file.getline(line, 200)) {//считываем строку пока это возможно
         int i=0;
+        flag2=0;
         if(string_errors(line,n1+1,flag)){;
             read(line,i,arr[n].time1);
             if(!(time_errors(arr[n].time1,n1+1,flag))){
@@ -90,11 +91,12 @@ int main(){
                 n1++;
                 continue;
             }
-            for(int i=0;i<n;i++){
-                if(str_same(arr[n].number,arr[i].number)){
-                    if(str_same(arr[n].mark,arr[i].mark)){
-                        if(arr[n].time==arr[i].time){
-                            cout<<"Ошибка, самолеты с одинаковыми бортовыми номерами не могут прилетать в одно время, убираем последнее появление этого самолета в таблице, на строке "<<n1<<"\n";
+
+            for(int j=0;j<n;j++){
+                if(str_same(arr[n].number,arr[j].number)){
+                    if(str_same(arr[n].mark,arr[j].mark)){
+                        if(arr[n].time==arr[j].time){
+                            cout<<"Ошибка, самолеты с одинаковыми бортовыми номерами не могут прилетать в одно время, убираем последнее появление этого самолета в таблице, на строке "<<n1+1<<"\n";
                             flag2=1;
                             break;
                         }
@@ -143,7 +145,7 @@ int main(){
 
     cout<<"-------\n";
     //Вывод таблицы
-    cout << '+'<< setfill('-') << setw(mark) << ""<< '+'<< setw(9) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
+    cout << '+'<< setfill('-') << setw(mark+2) << ""<< '+'<< setw(9) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
     for(int i=0;i<n;i++){
         int now_len=citymark_len(arr[bub[i]].city);
         int now_mark=citymark_len(arr[bub[i]].mark);
