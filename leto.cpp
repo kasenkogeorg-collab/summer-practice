@@ -42,17 +42,17 @@ int main(){
     #ifdef _WIN32
         SetConsoleOutputCP(CP_UTF8);
     #endif
-    const char file_name[]="CORRECT1.txt";
+    const char file_name[]="CORRECT3.txt";
     ifstream file(file_name); //открываем поток чтения из файла
     if(!file.is_open()){  //проверка на то,что мы смогли открыть файл
         cout<<"Ошибка, файл не удалось открыть";
         return -1;
     }
-    if((file.eof())||(file.fail())){ //проверка на то,что не произлошло ошибок во время открытия
+    if(file.peek() == -1){ //проверка на то,что не произлошло ошибок во время открытия
         cout<<"Ошибка чтения файла, или он пустой";
         return -1;
     }
-
+    
     char line[200]; //считываемая строка из файла
     plane arr[100]; //массив структур 
     int bub[100];   //массив индексов для сортировки
@@ -69,30 +69,30 @@ int main(){
     while (file.getline(line, 200)) {//считываем строку пока это возможно
         int i=0;
         flag2=0;
-        if(string_errors(line,n1+1,flag)){;
-            read(line,i,arr[n].time1);
-            if(!(time_errors(arr[n].time1,n1+1,flag))){
+        if(string_errors(line,n1+1,flag)){; //Проверка на первичные ошибки строки
+            read(line,i,arr[n].time1);     //считываем подстроку времени
+            if(!(time_errors(arr[n].time1,n1+1,flag))){ //проверка времени на корректность
                 n1++;
                 continue;
             }
-            arr[n].time=per(arr[n].time1);
-            read(line,i,arr[n].mark);
-            if(!(mark_errors(arr[n].mark,n1+1,flag))){
+            arr[n].time=per(arr[n].time1); //перевод времени в минуты
+            read(line,i,arr[n].mark);   //считываем подстроку марки ЛА
+            if(!(mark_errors(arr[n].mark,n1+1,flag))){  //проверка марки ЛА на корректность
                 n1++;
                 continue;
             }
-            read(line,i,arr[n].number);
-            if(!(number_errors(arr[n].number,n1+1,flag))){
+            read(line,i,arr[n].number);  //считываем подстроку бортового номера
+            if(!(number_errors(arr[n].number,n1+1,flag))){ //проверка бортового номера на корректность
                 n1++;
                 continue;
             }
-            read_city(line,i,arr[n].city);
-            if(!(city_errors(arr[n].city,n1+1,flag))){
+            read_city(line,i,arr[n].city); //считываем подстроку города
+            if(!(city_errors(arr[n].city,n1+1,flag))){ //проверка города на корректность
                 n1++;
                 continue;
             }
 
-            for(int j=0;j<n;j++){
+            for(int j=0;j<n;j++){ //поиск логической шибки, если уже есть самолет с таким бортовым номером и временем посадки
                 if(str_same(arr[n].number,arr[j].number)){
                     if(str_same(arr[n].mark,arr[j].mark)){
                         if(arr[n].time==arr[j].time){
@@ -108,8 +108,8 @@ int main(){
                  n1++;
                 continue;
             }
-            int cur_len=citymark_len(arr[n].city);
-            int cur_mark=citymark_len(arr[n].mark);
+            int cur_len=citymark_len(arr[n].city);  //поиск длины марки ЛА
+            int cur_mark=citymark_len(arr[n].mark);  //поиск длины города
             if(cur_len>len){
                 len=cur_len;
                 
@@ -117,7 +117,7 @@ int main(){
             if(cur_mark>mark){
                 mark=cur_mark;
             }
-            bub[n]=n;
+            bub[n]=n;//формируем индексный массив
             n++;
         }
         n1++;
@@ -145,7 +145,7 @@ int main(){
 
     cout<<"-------\n";
     //Вывод таблицы
-    cout << '+'<< setfill('-') << setw(mark+2) << ""<< '+'<< setw(9) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
+    cout << '+'<< setfill('-') << setw(7) << ""<< '+'<< setw(mark+2) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
     for(int i=0;i<n;i++){
         int now_len=citymark_len(arr[bub[i]].city);
         int now_mark=citymark_len(arr[bub[i]].mark);
@@ -160,7 +160,7 @@ int main(){
                 }
                 cout<<" |\n";
         }
-    cout << '+'<< setfill('-') << setw(7) << ""<< '+'<< setw(9) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
+    cout << '+'<< setfill('-') << setw(7) << ""<< '+'<< setw(mark+2) << ""<< '+'<< setw(8) << ""<< '+'<< setw(len+2) << ""<< '+'<< setfill(' ')<< '\n';
 
 
     file.close(); //закрываем поток чтения файла
@@ -273,6 +273,11 @@ int time_errors(char time[],int nume,int& flag){
         flag=1;
         return 0;
     }
+    if(time[2]!=':'){ //более строгая проверка формата времени, ваши комментарии в общей иформации и для некоторых людей расходятся
+        cout<<"Ошибка, на месте 3 символа во времени должно быть ':' в строке "<<nume<<" , пропускаем её\n";
+        flag=1;
+        return 0;
+    }
     for(int j=0;j<5;j++){
         if(time[j]!=':'){
             if(!(48 <= time[j] && time[j] <= 57)){  //проверка на то,что символы - цифры
@@ -308,7 +313,7 @@ int number_errors(char numb[],int nume,int& flag){
         return 0;
     }
     if(numb[2]!='-'){ //после Б всегда -
-        cout<<"Ошибка, не правильный формат бортового номера самолета, второй символ: " - " , в строке "<<nume<<" ,пропускаем её\n";
+        cout<<"Ошибка, не правильный формат бортового номера самолета, второй символ: ' - ' , в строке "<<nume<<" ,пропускаем её\n";
         flag = 1;
         return 0;        
     }
@@ -319,6 +324,11 @@ int number_errors(char numb[],int nume,int& flag){
             flag=1;
             return 0;
         }
+    }
+    if(numb[7]!='\0'){
+        cout<<"Ошибка, не правильный формат бортового номера самолета, слишком много символов, в строке "<<nume<<" ,пропускаем её\n";
+        flag = 1;
+        return 0;  
     }
     return 1;
 }
